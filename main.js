@@ -1,6 +1,17 @@
-const electron = require('electron')
+'use strict'
+
+if (require('electron-squirrel-startup')) return;
+
+var electron = require('electron');
+var app = electron.app;
+var os = require('os');
+// require('auto-updater') doesn't contain methods specified on Electron API
+var autoUpdater = electron.autoUpdater;
+
+const platform = os.platform() + '_' + os.arch()
+const version = app.getVersion()
+
 // Module to control application life.
-const app = electron.app
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 
@@ -15,8 +26,24 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  autoUpdater.setFeedURL('http://localhost:3000/updates/latest');
+  // strangely, getFeedURL doesn't exist
+
+  autoUpdater.checkForUpdates();
+
+  var events = ['error','checking-for-update','update-available', 'update-not-available', 'update-downloaded']
+
+  // monitor events
+  events.map(function(e){
+    autoUpdater.on(e, function(){
+      console.log(e);
+      console.log(JSON.stringify(arguments));
+
+      // if(e === 'update-downloaded') {
+      //   autoUpdater.quitAndInstall()
+      // }
+    });
+  });
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
