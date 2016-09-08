@@ -8,6 +8,7 @@ var app = electron.app;
 var os = require('os');
 // require('auto-updater') doesn't contain methods specified on Electron API
 var autoUpdater = electron.autoUpdater;
+var dialog = electron.dialog;
 
 const platform = os.platform() + '_' + os.arch()
 const version = app.getVersion()
@@ -44,9 +45,19 @@ function createWindow () {
     autoUpdater.on(e, function(){
       mainWindow.webContents.send('status-update', e, arguments);
 
-      // if(e === 'update-downloaded') {
-      //   autoUpdater.quitAndInstall()
-      // }
+      if(e === 'update-downloaded') {
+        dialog.showMessageBox(
+          mainWindow,
+          {
+            type: 'question',
+            buttons: [
+              'Install and relaunch',
+              'Cancel'
+            ],
+            message: 'An update is available!'
+          },
+          autoUpdater.quitAndInstall);
+      }
     });
   });
 

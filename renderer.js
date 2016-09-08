@@ -3,7 +3,8 @@ var ipc = electron.ipcRenderer;
 var $version = document.getElementById('version');
 var $status = document.getElementById('status');
 
-ipc.on('status-update', function(e, update){
+ipc.on('status-update', function(e, update, arguments){
+	console.log(arguments);
 	$status.innerHTML = update;
 });
 
