@@ -46,17 +46,7 @@ function createWindow () {
       mainWindow.webContents.send('status-update', e, arguments);
 
       if(e === 'update-downloaded') {
-        dialog.showMessageBox(
-          mainWindow,
-          {
-            type: 'question',
-            buttons: [
-              'Install and relaunch',
-              'Cancel'
-            ],
-            message: 'An update is available!'
-          },
-          autoUpdater.quitAndInstall);
+        autoUpdater.quitAndInstall();
       }
     });
   });
