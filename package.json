@@ -7,8 +7,8 @@
   "main": "main.js",
   "scripts": {
     "start": "NODE_ENV=development ./node_modules/.bin/electron .",
-    "release-server": "node release-server.js",
-    "pack:osx": "./node_modules/.bin/electron-packager . $npm_package_productName --app-version=$npm_package_version --version=0.36.7 --out=builds --ignore='^/builds$' --platform=darwin --arch=x64 --sign='com.apple.idms.appleid.prd.5a79757279563172646c6a41775069623379695456413d3d' --icon=icon.icns --overwrite",
+    "release-server": "source .env && node release-server.js",
+    "pack:osx": "./node_modules/.bin/electron-packager . $npm_package_productName --app-version=$npm_package_version --version=0.36.7 --out=builds --ignore='^/builds$' --platform=darwin --arch=x64 --sign='Mac Developer: Aaron Noel De Leon (PRPG6STSG4)' --icon=icon.icns --overwrite",
     "pack:win": "./node_modules/.bin/electron-packager . $npm_package_productName --app-version=$npm_package_version --version=0.36.7 --out=builds --ignore='^/builds$' --platform=win32 --arch=ia32 --version-string.CompanyName='My Company Ltd' --version-string.LegalCopyright='Copyright (C) 2016 My Company Ltd' --version-string.FileDescription=$npm_package_productName --version-string.OriginalFilename='MyApp.exe' --version-string.InternalName=$npm_package_productName --version-string.ProductName=$npm_package_productName --version-string.ProductVersion=$npm_package_version --asar=true --icon=logo.ico --overwrite"
   },
   "repository": {

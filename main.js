@@ -3,6 +3,7 @@
 if (require('electron-squirrel-startup')) return;
 
 var electron = require('electron');
+var ipc = electron.ipcMain;
 var app = electron.app;
 var os = require('os');
 // require('auto-updater') doesn't contain methods specified on Electron API
@@ -22,22 +23,26 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow.toggleDevTools();
 
   // and load the index.html of the app.
   mainWindow.loadURL(`file://${__dirname}/index.html`)
 
-  autoUpdater.setFeedURL('http://localhost:3000/updates/latest');
+  autoUpdater.setFeedURL('http://00251332.ngrok.io/packages/update/'+platform+'/'+version);
   // strangely, getFeedURL doesn't exist
 
-  autoUpdater.checkForUpdates();
-
-  var events = ['error','checking-for-update','update-available', 'update-not-available', 'update-downloaded']
+  var events = [
+    'error',
+    'checking-for-update',
+    'update-available',
+    'update-not-available',
+    'update-downloaded'
+  ];
 
   // monitor events
   events.map(function(e){
     autoUpdater.on(e, function(){
-      console.log(e);
-      console.log(JSON.stringify(arguments));
+      mainWindow.webContents.send('status-update', e, arguments);
 
       // if(e === 'update-downloaded') {
       //   autoUpdater.quitAndInstall()
@@ -57,7 +62,7 @@ function createWindow () {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -74,7 +79,12 @@ app.on('activate', function () {
   if (mainWindow === null) {
     createWindow()
   }
-})
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+ipc.on('INIT', function(){
+  mainWindow.send('status-update', 'initialized');
+  mainWindow.send('version-update', version);
+  autoUpdater.checkForUpdates();
+});
